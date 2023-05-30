@@ -1,0 +1,8 @@
+version=4
+# It is not recommended use npmregistry. But it appears to be the only option
+# until erminas tags releases on GitHub.
+# Origin url: https://github.com/erminas/node-red-contrib-revpi-nodes
+# Take a look at https://wiki.debian.org/debian/watch/
+opts="searchmode=plain,pgpmode=none" \
+ https://registry.npmjs.org/node-red-contrib-revpi-nodes \
+ https://registry.npmjs.org/node-red-contrib-revpi-nodes/-/node-red-contrib-revpi-nodes-(\d[\d\.]*)@ARCHIVE_EXT@

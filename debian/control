@@ -1,0 +1,26 @@
+Source: node-red-contrib-revpi-nodes
+Section: javascript
+Priority: optional
+Maintainer: KUNBUS GmbH <support@kunbus.com>
+Rules-Requires-Root: no
+Homepage: https://github.com/erminas/node-red-contrib-revpi-nodes
+Vcs-Browser: https://github.com/RevolutionPi/node-red-contrib-revpi-nodes
+Vcs-Git: https://github.com/RevolutionPi/node-red-contrib-revpi-nodes.git
+Build-Depends:
+  debhelper-compat (= 13),
+  nodejs (>= 6),
+  pkg-js-tools (>= 0.9.35)
+Standards-Version: 4.5.1
+
+Package: node-red-contrib-revpi-nodes
+Architecture: all
+Depends: ${misc:Depends}
+Description: Node-RED nodes for Revolution Pi
+ Node-RED nodes to read or write elements in the process image of a
+ Revolution Pi.  A daemon needs to be running on the Revolution Pi
+ to serve as a bridge between the Node-RED nodes and the process image.
+ .
+ Node-RED is a graphical flow editor for event driven applications.
+ .
+ Revolution Pi is a set of IoT products based on the Raspberry Pi and
+ geared towards industrial usage.

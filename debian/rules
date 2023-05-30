@@ -1,0 +1,15 @@
+#!/usr/bin/make -f
+
+DEB_DESTDIR := debian/node-red-contrib-revpi-nodes
+
+%:
+	dh $@ --with nodejs
+
+override_dh_auto_test:
+
+override_dh_auto_install:
+	dh_auto_install --buildsystem=nodejs
+	mkdir -p $(DEB_DESTDIR)/usr/lib/node_modules
+	mv $(DEB_DESTDIR)/usr/share/nodejs/node-red-contrib-revpi-nodes \
+	   $(DEB_DESTDIR)/usr/lib/node_modules
+	rmdir $(DEB_DESTDIR)/usr/share/nodejs
