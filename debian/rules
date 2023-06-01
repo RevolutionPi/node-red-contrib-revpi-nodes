@@ -12,4 +12,7 @@ override_dh_auto_install:
 	mkdir -p $(DEB_DESTDIR)/usr/lib/node_modules
 	mv $(DEB_DESTDIR)/usr/share/nodejs/node-red-contrib-revpi-nodes \
 	   $(DEB_DESTDIR)/usr/lib/node_modules
+	mkdir -p $(DEB_DESTDIR)/usr/lib/node_modules/node-red-contrib-revpi-nodes/node_modules
+	mv $(DEB_DESTDIR)/usr/lib/node_modules/node-red-contrib-revpi-nodes/ws \
+	   $(DEB_DESTDIR)/usr/lib/node_modules/node-red-contrib-revpi-nodes/node_modules
 	rmdir $(DEB_DESTDIR)/usr/share/nodejs
