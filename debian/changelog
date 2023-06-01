@@ -1,0 +1,73 @@
+node-red-contrib-revpi-nodes (1.1.0+ds1-1+revpi11+1) bullseye; urgency=medium
+
+  [ jonas.gerlach ]
+  * Initial commit of version 1.0.0
+  * Fixes async/scope bug for multi input nodes
+  * improvements to manuals (more links, added example flow, described
+    requirements) - fixed wrong logic in output pin (overwrite value tick
+    was swapped) - better command input handling in python server (empty
+    string as output value) - small improvements to german translation
+  * fixed broken image link in Readme
+  * 1.0.1
+
+  [ Boris Crismancich ]
+  * Update README.md
+
+  [ erminas\david.fillmer ]
+  * Changed wrong Description & changed version to 1.0.2
+
+  [ Timo Alts ]
+  * fix typo in readme
+
+  [ dfilsinger-erminas ]
+  * Update requirements, raspbian stretch is required
+  * added tags for search optimization at node-red.com
+
+  [ jonas.gerlach ]
+  * version 1.0.4 - added topics to message payloads of revpi nodes (see
+    https://revolution.kunbus.de/forum/viewtopic.php?f=8&t=1756&p=6633&hilit=nodes#p6633
+    (german)) - fixed reported issue of incorrect behaving nodes:
+    https://github.com/erminas/node-red-contrib-revpi-nodes/issues/4 - improved
+    translation of help documents - cutting off too long node descriptions -
+    steamlined node status messages - improvements to readmes (additional links, )
+  * version 1.0.5
+  * version 1.0.6
+
+  [ Lukas Wunner ]
+  * Add Debian packaging
+
+  [ tom-niklas ]
+  * Update README.md
+
+  [ jgerlach-erminas ]
+  * Update package.json
+
+  [ jonas.gerlach ]
+  * version 1.0.7
+
+  [ dfilsinger-erminas ]
+  * unique hidden-class fpr revpi-nodes
+  * Version in package.json 1.0.7-1
+  * Bug caused by version with build number fixed.
+  * version number incremented
+
+  [ jonas.gerlach ]
+  * - disabled websocket message compression to prevent known problems as memory
+    fragmentation (see https://github.com/websockets/ws#websocket-compression) -
+    fixed temporary websocket handling - improved node status (showing
+    Connecting) - fixed onprepare setting callback sending initial node values -
+    improved node help texts
+  * - closing sockets before activating new sockets while reconnecting
+  * - bump to version 1.1.0 - improved websocket handling, proper removal of
+    temporary websockets - reduced websocket traffic for Multi-Input-Nodes,
+    known values are kept locally - for increased performance only selected
+    signals are registered at the server and processed - updated package
+    dependencies -  removed unused debian packaging
+
+  [ Sven Sager ]
+  * Import depending node module ws version 8.8.1
+  * packaging: Add npm2deb debian files
+  * packaging: Use the upstream tags in gbp.conf
+  * packaging: Move ws module to local node_modules dir
+
+ -- Sven Sager <s.sager@kunbus.com>  Thu, 01 Jun 2023 10:46:08 +0200
