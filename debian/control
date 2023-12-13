@@ -4,13 +4,13 @@ Priority: optional
 Maintainer: KUNBUS GmbH <support@kunbus.com>
 Rules-Requires-Root: no
 Homepage: https://github.com/erminas/node-red-contrib-revpi-nodes
-Vcs-Browser: https://github.com/RevolutionPi/node-red-contrib-revpi-nodes
-Vcs-Git: https://github.com/RevolutionPi/node-red-contrib-revpi-nodes.git
+Vcs-Browser: https://gitlab.com/RevolutionPi/node-red-contrib-revpi-nodes
+Vcs-Git: https://gitlab.com/RevolutionPi/node-red-contrib-revpi-nodes.git -b raspios/bookworm
 Build-Depends:
   debhelper-compat (= 13),
   nodejs (>= 6),
   pkg-js-tools (>= 0.9.35)
-Standards-Version: 4.5.1
+Standards-Version: 4.6.2
 
 Package: node-red-contrib-revpi-nodes
 Architecture: all
