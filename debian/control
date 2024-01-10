@@ -5,7 +5,7 @@ Maintainer: KUNBUS GmbH <support@kunbus.com>
 Rules-Requires-Root: no
 Homepage: https://github.com/erminas/node-red-contrib-revpi-nodes
 Vcs-Browser: https://gitlab.com/RevolutionPi/node-red-contrib-revpi-nodes
-Vcs-Git: https://gitlab.com/RevolutionPi/node-red-contrib-revpi-nodes.git -b raspios/bookworm
+Vcs-Git: https://gitlab.com/RevolutionPi/node-red-contrib-revpi-nodes.git -b debian/bookworm
 Build-Depends:
   debhelper-compat (= 13),
   nodejs (>= 6),
