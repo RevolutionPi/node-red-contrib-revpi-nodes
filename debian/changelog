@@ -1,3 +1,13 @@
+node-red-contrib-revpi-nodes (1.1.0+ds1-1+revpi12+2) bookworm; urgency=medium
+
+  [ Philipp Rosenberger ]
+  * Switch back to the debian/ namespace
+
+  [ Sven Sager ]
+  * feat(deb): The version of the nodes needs the right server version
+
+ -- Sven Sager <s.sager@kunbus.com>  Tue, 14 May 2024 05:53:23 +0200
+
 node-red-contrib-revpi-nodes (1.1.0+ds1-1+revpi12+1) bookworm; urgency=medium
 
   * packaging: Update debian files for debian bookworm
