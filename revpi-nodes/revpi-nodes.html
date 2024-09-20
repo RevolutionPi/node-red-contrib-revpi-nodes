@@ -1,7 +1,7 @@
 <!-- node-red-contrib-revpi-nodes
- 
+
   Copyright (C) 2019 erminas GmbH
- 
+
   This file is subject to the terms and conditions defined in
   file 'LICENSE.txt', which is part of this source code package.
 -->
@@ -48,9 +48,9 @@
     function getPins(server, done) {
         var host = server.host;
         var port = server.port;
-        
+
         if (host && port) {
-            
+
 			var params = {
 				host: host,
 				port: port,
@@ -66,7 +66,7 @@
                 if (response === false) {
                     pinToHost[host + ':' + port] = null;
                 } else if (!jQuery.isEmptyObject(response)){
-					if(!response.hasOwnProperty('error')){				
+					if(!response.hasOwnProperty('error')){
 						pinToHost[host + ':' + port] = response;
 						pinToHost[host + ':' + port].inputs = pinToHost[host + ':' + port].inputs.sort(function (a, b) {
 							return a.name.localeCompare(b.name)
@@ -77,35 +77,35 @@
 						pinToHost[host + ':' + port].both = [].concat(pinToHost[host + ':' + port].inputs, pinToHost[host + ':' + port].outputs);
 					}
                 }
-				
+
 				if (done) {
 					done();
 				}
             });
         }
     }
-	
+
     function revPiAddOptions(server, select, input, pintype) {
         var host = server.host;
         var port = server.port;
-		
+
 		var selectObj = jQuery(select);
 
-		selectObj.css('cursor','wait');	
+		selectObj.css('cursor','wait');
 		selectObj.prop('disabled', true);
-		
+
         if (typeof (pins) === 'undefined' || pins === null) {
             getPins(server, function () {
 				var pins = pinToHost[host + ':' + port];
-				
-				selectObj.css('cursor','default');	
-				
+
+				selectObj.css('cursor','default');
+
 				if(pins===null){
 					selectObj.attr('title', 'Check server settings');
 				}else{
 					selectObj.prop('disabled', false);
 					selectObj.attr('title', '');
-					
+
 					if (typeof (pintype) === 'undefined') {
 						pintype = 'both';
 					}
@@ -115,7 +115,7 @@
 						numeric: true,
 						sensitivity: 'base'
 					}));
-					
+
 					while (selectObj[0].lastElementChild) {
 						selectObj[0].removeChild(selectObj[0].lastElementChild);
 					  }
@@ -134,35 +134,35 @@
 				}
             });
         }
-        
+
     }
 
 
     function revPiAddMultipleOptions(server, select, input, pintype, inputPinList) {
         var host = server.host;
         var port = server.port;
-		
+
 		var selectObj = jQuery(select);
 
-		selectObj.css('cursor','wait');	
+		selectObj.css('cursor','wait');
 		selectObj.find(":input").prop('disabled', true);
-		
+
         if (typeof (pins) === 'undefined' || pins === null) {
             getPins(server, function () {
 				var pins = pinToHost[host + ':' + port];
-				
+
 				selectObj.css('cursor','default');
-				
+
 				if(pins===null){
 					selectObj.attr('title', 'Check server settings');
 				}else{
 					selectObj.find(":input").prop('disabled', false);
 					selectObj.attr('title', '');
-				
+
 					if (typeof (pintype) === 'undefined') {
 						pintype = 'both';
 					}
-					
+
 					while (selectObj[0].lastElementChild) {
 						selectObj[0].removeChild(selectObj[0].lastElementChild);
 					  }
@@ -182,7 +182,7 @@
 				}
             });
         }
-        
+
     }
 
 </script>
@@ -196,12 +196,12 @@
             user: {value: "", required: false},
             password: {value: "", required: false},
             rejectUnauthorized: {value: false, required: false},
-            ca: 
-            {value: "", validate: function(path) 
+            ca:
+            {value: "", validate: function(path)
                {
                     var checked = this.rejectUnauthorized;
 
-                    if (!checked) 
+                    if (!checked)
                     {
                         return true;
                     }
@@ -209,11 +209,11 @@
 					{
 						return true;
                     }
-					
+
 					return false;
-					
+
                 }
-            
+
             },
         },
         oneditprepare: function () {
@@ -229,10 +229,10 @@
         oneditsave: function () {
             var host = this.host = jQuery('#node-config-input-host').val();
             var port = this.port = parseInt(jQuery('#node-config-input-port').val(), 10);
-			
+
             var user = this.user = jQuery('#node-config-input-user').val();
             var password = this.password = jQuery('#node-config-input-password').val();
-			
+
             var rejectUnauthorized = this.rejectUnauthorized = jQuery('#node-config-input-rejectUnauthorized').is(":checked");
 
             var ca = this.ca = jQuery('#node-config-input-ca').val();
@@ -297,14 +297,14 @@
         },
         oneditprepare: function () {
 			var serverObj =jQuery('#node-input-server').val();
-			
+
 			var oldHost = null;
 			var oldPort = null;
-			
+
 			if(serverObj !== null && serverObj !== '_ADD_'){
 				oldHost = RED.nodes.node(serverObj).host;
 				oldPort = RED.nodes.node(serverObj).port;
-				
+
 				if (this.server && this.server != null) {
 					var server = RED.nodes.node(this.server);
 					if (server !== null) {
@@ -316,10 +316,10 @@
 			jQuery('#node-input-server').change(function () {
 				if(jQuery(this).val() !== '_ADD_'){
 					var newServer = RED.nodes.node(jQuery(this).val());
-						
+
 					if (((oldHost === null && oldPort == null) || newServer.host !== oldHost || newServer.port !== oldPort )) {
 						revPiAddOptions(newServer, "#node-input-inputpin-fake", "#node-input-inputpin", "inputs");
-						
+
 						oldHost = newServer.host;
 						oldPort = newServer.port;
 					}
@@ -375,9 +375,9 @@
         outputs: 1,
         icon: "revpi.png",
         label: function () {
-		
+
 			var labelInputpins = this.inputpin.replace(/ /g,", ");
-				
+
             if (this.inputpin !== "") {
                 const maxLabelLength = 48;
                 let cut = maxLabelLength;
@@ -394,21 +394,21 @@
                         }
                     }
                     return "Pins:" + labelInputpins.slice(0, cut) + "...";
-                } 
+                }
             }else {
                     return "revpi-multiple-input";
                 }
         },
         oneditprepare: function () {
 			var serverObj =jQuery('#node-input-server').val();
-			
+
 			var oldHost = null;
 			var oldPort = null;
-			
+
 			if(serverObj !== null && serverObj !== '_ADD_'){
 				oldHost = RED.nodes.node(serverObj).host;
 				oldPort = RED.nodes.node(serverObj).port;
-				
+
 				if (this.server && this.server != null) {
 					var server = RED.nodes.node(this.server);
 					if (server !== null) {
@@ -416,27 +416,27 @@
 					}
 				}
 			}
-			
+
 			jQuery('#node-input-server').change({old_inputPinList: this.inputPinList}, function (event) {
 				if(jQuery(this).val() !== '_ADD_'){
 					var newServer = RED.nodes.node(jQuery(this).val());
-						
+
 					if (((oldHost === null && oldPort == null) || newServer.host !== oldHost || newServer.port !== oldPort )) {
 						revPiAddMultipleOptions(newServer, "#revpi-multiple-input-wrapper", "#node-input-inputpin", "inputs", event.data.old_inputPinList);
-						
+
 						oldHost = newServer.host;
 						oldPort = newServer.port;
 					}
 				}
 			});
-			
+
         },
         oneditsave: function () {
             var pinsList = [];
             jQuery('#revpi-multiple-input-wrapper input[name="pins"]:checked').each(function () {
                 pinsList.push(this.value)
             });
-			
+
 			if(pinsList.length > 0){
 				jQuery('#node-input-inputpin').val(this.inputPinList = pinsList.join(" "));
 			}
@@ -476,19 +476,19 @@
                 value: "",
                 exportable: true,
                 validate: function(v) {
-                
+
                     var checked = this.getoverwritevalue;
-                    if (checked) 
+                    if (checked)
                     {
                         return true;
                     }
-                    else 
+                    else
                     {
                         if  (v.length != 0){
                             return true;
                         }
                     }
-                    
+
                     return false;
                 }
             },
@@ -496,7 +496,7 @@
                 value: "",
                 exportable: true
             }
-            
+
         },
 
         inputs: 1,
@@ -510,14 +510,14 @@
         },
         oneditprepare: function () {
 			var serverObj =jQuery('#node-input-server').val();
-			
+
 			var oldHost = null;
 			var oldPort = null;
-			
+
 			if(serverObj !== null && serverObj !== '_ADD_'){
 				oldHost = RED.nodes.node(serverObj).host;
 				oldPort = RED.nodes.node(serverObj).port;
-				
+
 				if (this.server && this.server != null) {
 					var server = RED.nodes.node(this.server);
 					if (server !== null) {
@@ -525,20 +525,20 @@
 					}
 				}
 			}
-			
+
 			jQuery('#node-input-server').change(function () {
 				if(jQuery(this).val() !== '_ADD_'){
 					var newServer = RED.nodes.node(jQuery(this).val());
-						
+
 					if (((oldHost === null && oldPort == null) || newServer.host !== oldHost || newServer.port !== oldPort )) {
 						revPiAddOptions(newServer, "#node-input-inputpin-fake", "#node-input-inputpin", "both");
-						
+
 						oldHost = newServer.host;
 						oldPort = newServer.port;
 					}
 				}
 			});
-			
+
 			jQuery('#node-input-getoverwritevalue').off('change').on('change', function () {
                 if (jQuery(this).is(':checked')) {
                     jQuery('#selectPin').hide().find('#node-input-inputpin').val('');
@@ -577,7 +577,7 @@
             <select id="node-input-inputpin-fake"></select>
 		</div>
     </div>
-	
+
 	<div class="form-row">
 		<label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="revpiNodes.getpin.topic"></label>
 		<input type="text" id="node-input-topic">
@@ -613,14 +613,14 @@
         },
         oneditprepare: function () {
 			var serverObj =jQuery('#node-input-server').val();
-			
+
 			var oldHost = null;
 			var oldPort = null;
-			
+
 			if(serverObj !== null && serverObj !== '_ADD_'){
 				oldHost = RED.nodes.node(serverObj).host;
 				oldPort = RED.nodes.node(serverObj).port;
-				
+
 				if (this.server && this.server != null) {
 					var server = RED.nodes.node(this.server);
 					if (server !== null) {
@@ -628,14 +628,14 @@
 					}
 				}
 			}
-			
+
 			jQuery('#node-input-server').change(function () {
 				if(jQuery(this).val() !== '_ADD_'){
 					var newServer = RED.nodes.node(jQuery(this).val());
-						
+
 					if (((oldHost === null && oldPort == null) || newServer.host !== oldHost || newServer.port !== oldPort )) {
                     revPiAddOptions(newServer, "#node-input-outputpin-fake", "#node-input-outputpin", "outputs");
-						
+
 						oldHost = newServer.host;
 						oldPort = newServer.port;
 					}

@@ -5,7 +5,7 @@
  * This file is subject to the terms and conditions defined in
  * file 'LICENSE.txt', which is part of this source code package.
  */
- 
+
 var socketClass = require("./libs/socket.js");
 var fs = require('fs');
 
@@ -17,10 +17,10 @@ var log = function (msg) {
 
 function createWebsocket(config, callback) {
     var url = "wss://" + config.host + ":" + config.port;
-	
+
 	var socket = new socketClass(url, config);
 	socket.connect(callback);
-	
+
 	return socket;
 }
 
@@ -33,8 +33,8 @@ module.exports = function (RED) {
         RED.nodes.createNode(this, config, undefined);
         this.host = config.host;
         this.port = config.port;
-		
-		
+
+
 		this.socketConfig={
 			host: config.host,
 			port: config.port,
@@ -45,20 +45,20 @@ module.exports = function (RED) {
 			ca: config.ca || "" ,
 			canReconnect: true
 		}
-		
+
         var node = this;
-		
+
         this.socket = createWebsocket(this.socketConfig,function () {
 			if(node.socket.isAuthorized()){
 				log("Connected server "+node.host+":"+node.port);
 			}
 		});
-		
+
 
 		if(config.ca && !fs.existsSync(config.ca)){
 			node.error("CA certificate with path "+config.ca+" not found!");
 		}
-		
+
         this.on("close", function (removed, done) {
             removeWebsocket(node.socket);
 			if (done) {
@@ -75,18 +75,18 @@ module.exports = function (RED) {
         this.server = RED.nodes.getNode(config.server);
         this.inputpin = config.inputpin;
         this.topic = config.topic;
-		
+
         if (this.server) {
 			this.server.socket.registerInput(this);
             var node = this;
-			
+
 			this.server.socket.sendCommand("getpin", function (msg) {
 				var data = JSON.parse(msg);
-				
+
 				if (data !== false)
 				{
 					var pin = data.name, value = data.value, error = data.error;
-						
+
 					if (error === "ERROR_AUTH"){
 						node.status(node.getStatusObject("error", "NOT AUTHORIZED"));
 					}else if (error === "ERROR_UNKNOWN"){
@@ -97,8 +97,8 @@ module.exports = function (RED) {
 						var setTopic = (node.topic == null || node.topic == "") ? "revpi/single/" + pin : node.topic;
 						node.send({payload: value, topic: setTopic});
 					}
-						
-					
+
+
 				}
 			}, [this.inputpin]);
 		}
@@ -112,20 +112,20 @@ module.exports = function (RED) {
         this.inputpin = config.inputpin;
         this.inputValues = {};
         this.topic = config.topic;
-		
+
         if (this.server) {
 			this.server.socket.registerMultiInput(this);
             var node = this, promises = [];
-			
+
 			var pinNames = this.inputpin.split(" ").forEach(pinName => {
 				promises.push(new Promise((resolve, reject) => {
 					this.server.socket.sendCommand("getpin", function (msg) {
 						var data = JSON.parse(msg);
-				
+
 						if (data !== false)
 						{
 							var pin = data.name, value = data.value, error = data.error;
-								
+
 							if (error === "ERROR_AUTH"){
 								reject("NOT AUTHORIZED");
 							}else if (error === "ERROR_UNKNOWN") {
@@ -136,17 +136,17 @@ module.exports = function (RED) {
 								resolve(data);
 							}
 						}
-							
+
 					}, [pinName]);
 				}));
 			});
-			
+
 			Promise.all(promises).then(values => {
 				var payloadJSONObj = {};
 				values.forEach(valPair => {
 					payloadJSONObj[valPair.name] = valPair.value;
 				});
-				
+
 				var setTopic = (node.topic == null || node.topic == "") ? "revpi/multi" : node.topic;
 				this.inputValues = payloadJSONObj;
 				node.send({payload: payloadJSONObj, topic: setTopic});
@@ -172,15 +172,15 @@ module.exports = function (RED) {
 
         this.on("input", function (msg) {
             var pinName = this.getoverwritevalue ? msg.payload : this.inputpin, node = this;
-			
+
             if (this.server && pinName != null) {
 				this.server.socket.sendCommand("getpin", function (msg) {
 					var data = JSON.parse(msg);
-			
+
 					if (data !== false)
 					{
 						var pin = data.name, value = data.value, error = data.error;
-							
+
 						if (error === "ERROR_AUTH"){
 							node.status(node.getStatusObject("error", "ERROR: NO CONNECTION"));
 						}else if (error === "ERROR_UNKNOWN") {
@@ -189,12 +189,12 @@ module.exports = function (RED) {
 							node.status(node.getStatusObject("error", "UNKNOWN PIN: " + pin + "!"));
 						} else {
 							node.status(node.getStatusObject("info", "Connected - " + pin + " is " + value));
-							
+
 							var setTopic = (node.topic == null || node.topic == "") ? "revpi/single/"+pin : node.topic;
 							node.send({payload: value, topic: setTopic});
-							
+
 						}
-						
+
 					}
 				}, [pinName]);
 			}
@@ -218,12 +218,12 @@ module.exports = function (RED) {
         this.on("input", function (msg) {
             var val = this.overwritevalue ? this.outputvalue : msg.payload;
             var node = this;
-			
-			
+
+
             if (this.server && val !== null && typeof (val) !== "object") {
                 this.server.socket.sendCommand("output", function (msgAdditional) {
 					var data = JSON.parse(msgAdditional);
-			
+
 					if (data !== false)
 					{
 						var pin = data.name;
@@ -235,7 +235,7 @@ module.exports = function (RED) {
 							node.status(node.getStatusObject("info", "Change - " + node.outputpin + " is " + val));
 						}
 					}
-					
+
                 }, [this.outputpin, val]);
             }
         });
@@ -246,9 +246,9 @@ module.exports = function (RED) {
 
     RED.httpAdmin.post("/revpi-server-list-pins/", RED.auth.needsPermission("revpi-server.read"), function (req, res) {
         var result = res;
-		
+
 		if (req.body.host && req.body.port && (req.body.host + "").length > 1) {
-			
+
 			var socketConfig={
 				host: req.body.host,
 				port: req.body.port,
@@ -258,7 +258,7 @@ module.exports = function (RED) {
 				rejectUnauthorized: JSON.parse(req.body.rejectUnauthorized),
 				canReconnect: false
 			}
-			
+
 			if(req.body.ca){
 				socketConfig.ca = req.body.ca;
 			}
@@ -266,7 +266,7 @@ module.exports = function (RED) {
 			var tmp_socket = createWebsocket(socketConfig,function () {
 
 				if(tmp_socket.isAuthorized()){
-					tmp_socket.sendCommand("list", function (res) {	
+					tmp_socket.sendCommand("list", function (res) {
 						result.json(res);
 						removeWebsocket(tmp_socket);
 					}, [req.body.force_update]);
@@ -274,10 +274,10 @@ module.exports = function (RED) {
 					result.json(false);
 					removeWebsocket(tmp_socket);
 				}
-				
+
 			});
 
-			
+
 
         } else {
             result.json(false);

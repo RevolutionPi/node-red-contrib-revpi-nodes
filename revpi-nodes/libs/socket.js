@@ -11,13 +11,13 @@ var pjson = require('./../../package.json');
 var fs = require('fs');
 
 module.exports = function (url, config) {
-	
+
     var log = function (msg) {
         if (console) {
 			console.log.apply(console, [new Date().toISOString().replace('T', ' ').substr(0, 19)].concat([].slice.call(arguments)));
         }
     };
-	
+
     var options = {
         url: url || "wss://localhost:8000",
 		user: config.user,
@@ -26,8 +26,8 @@ module.exports = function (url, config) {
 		getAutomaticUpdates : config.getAutomaticUpdates,
         canReconnect: config.canReconnect || false
     };
-	
-	
+
+
 	if(config.rejectUnauthorized && config.ca){
 		try {
 			options.ca = fs.readFileSync(config.ca);
@@ -39,18 +39,18 @@ module.exports = function (url, config) {
 
 	var protocols = {rejectUnauthorized: options.rejectUnauthorized};
 	var webSocketOptions = { perMessageDeflate: false};
-	
+
 	if(options.ca){
 		protocols.ca=options.ca;
 	}
 
     var connection = new WebSocket(options.url,protocols, webSocketOptions);
     var connected = false;
-	
+
 	const loginStates = {"ERROR_AUTH":0,"SUCCESS_AUTH":1, "ERROR_UNSUPPORTED_VERSION":2};
 	Object.freeze(loginStates);
 	var loginStatus = loginStates.ERROR_AUTH;
-	
+
     var reconnectAttempts = 0;
     var sendCommandPool = []; // Commands are stored as long as the connection is not established.
     var commandList = ["login","commands", "list", "output", "getpin"];
@@ -77,8 +77,8 @@ module.exports = function (url, config) {
         }
         return statusObject;
     };
-	
-	
+
+
 	var setAllNodesStatus = function (status, text) {
 		[].concat(
 			Object.values(multiInputNodes),
@@ -88,14 +88,14 @@ module.exports = function (url, config) {
 		).forEach((node) => {
 			node.status(getStatusObject(status, text));
 		});
-		
+
 	};
 
     // input command is allways there to communicate the input back to nodered
     var sendCommandStorage = {
         "input": [function (msg) {
 			data = JSON.parse(msg);
-			
+
 			if (data !== false)
 			{
 				if (data.error !== "ERROR_AUTH" && data.error !== "ERROR_UNKNOWN" ) {
@@ -103,9 +103,9 @@ module.exports = function (url, config) {
 					for (id in inputNodes) {
 						if (!inputNodes.hasOwnProperty(id)) continue;
 
-						if (inputNodes[id].inputpin === pin){ 
+						if (inputNodes[id].inputpin === pin){
 							var setTopic = (inputNodes[id].topic == null || inputNodes[id].topic == "") ? "revpi/single/"+pin : inputNodes[id].topic;
-						
+
 							inputNodes[id].send({payload: value, topic: setTopic});
 							inputNodes[id].status(getStatusObject("info", "Change - " + pin + " is " + value));
 						}
@@ -164,15 +164,15 @@ module.exports = function (url, config) {
 				if (reconnectAttempts < 10) {
 					reconnectAttempts++;
 					log("Try to reconnect - Attempt: " + reconnectAttempts);
-					
+
 					var protocols = {rejectUnauthorized: options.rejectUnauthorized};
-					
+
 					if(options.ca){
 						protocols.ca=options.ca;
 					}
-					
+
 					setAllNodesStatus("error", "Reconnecting...");
-					
+
 					connection.close();
 					connection = new WebSocket(options.url, protocols, webSocketOptions);
 					connectToServer();
@@ -189,48 +189,48 @@ module.exports = function (url, config) {
     var connectToServer = function (cb) {
         log("Connecting to WS Server " + url);
         var that = this;
-		
+
 		var canReconnect = options.canReconnect;
-		
+
         connection.onerror = function (ErrorEvent) {
             var me = that;
             log("ERROR", "Connection to server "+url+" error: " +ErrorEvent.message);
-			
+
 			if(cb){
 				cb();
 			}
         };
-		
+
         connection.onopen = function (data) {
 			connected = true;
             log("Connection to WS Server "+url+" established!");
             reconnectAttempts = 0;
             isReconnect = false;
-            
+
 			var inputPins = [];
-			
+
 			for (id in inputNodes) {
 				if (!inputNodes.hasOwnProperty(id)) continue;
 
 				inputPins.push(inputNodes[id].inputpin);
 			}
-			
+
 			for (id in multiInputNodes) {
 				if (!multiInputNodes.hasOwnProperty(id)) continue;
 
 				inputPins = inputPins.concat(multiInputNodes[id].inputpin.split(" "));
 			}
-			
+
 			for (id in getpinNodes) {
 				if (!getpinNodes.hasOwnProperty(id)) continue;
 
 				inputPins.push(getpinNodes[id].inputpin);
 			}
-			
-			
+
+
 			sendCommandMethod("login", function (msg) {
 				data = JSON.parse(msg);
-            
+
 				if (data !== false)
 				{
 					if (data.error === "ERROR_AUTH") {
@@ -245,33 +245,32 @@ module.exports = function (url, config) {
 						log("info", "Authorized by server!");
 						loginStatus=loginStates.SUCCESS_AUTH;
                         setAllNodesStatus("success", "Connected");
-						
+
 						var list = sendCommandPool;
 						sendCommandPool = {};
 						for (var command in list) {
-							
+
 							for (var i = 0, l = list[command].length; i < l; ++i) {
 								sendCommandStorage[command].push(list[command][i]);
 							}
 							connection.send(command, undefined, undefined);
 						}
-						
+
 					}
 				}
-				
+
 				if(cb){
 					cb();
 				}
 			}, [pjson.version,options.user,options.password,options.getAutomaticUpdates, inputPins]);
-			
+
         };
 
         connection.onmessage = function (data) {
             var msg = data.data;
             var msgSplit = msg.split(";");
             var fullCommand = msgSplit.shift();
-			
-			
+
             var newMsg = msgSplit.join(";");
             if (sendCommandStorage[fullCommand]) {
                 sendCommandStorage[fullCommand].forEach((callBack) => {
@@ -282,13 +281,12 @@ module.exports = function (url, config) {
                 }
             }
         };
-		
+
         connection.onclose = function () {
             connected = false;
             log("Lost connection to WS Server!");
 
 			setAllNodesStatus("error", "Disconnected");
-			
             if (isReconnect === false && canReconnect) {
                 setTimeout(function () {
                     reconnect();
@@ -296,7 +294,7 @@ module.exports = function (url, config) {
             }
        };
     };
-	
+
 
     this.sendCommand = sendCommandMethod = function (command, cb, args) {
 		if (commandList.indexOf(command) !== -1 || command === "") {
@@ -328,11 +326,11 @@ module.exports = function (url, config) {
     this.isConnected = function () {
         return connected;
     };
-	
+
 	this.isAuthorized = function () {
         return loginStatus === loginStates.SUCCESS_AUTH;
     };
-	
+
 	this.isUnsupportedServer = function () {
         return loginStatus === loginStates.ERROR_UNSUPPORTED_VERSION;
     };
@@ -380,8 +378,8 @@ module.exports = function (url, config) {
         outputNodes[node.id] = node;
 		node.status(getStatusObject("error", "Connecting..."));
     };
-	
-	
+
+
 
     this.kill = killMethod = function () {
 		options.canReconnect = false;
