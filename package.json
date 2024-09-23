@@ -19,7 +19,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/erminas/node-red-contrib-revpi-nodes.git"
+    "url": "https://gitlab.com/revolutionpi/node-red-contrib-revpi-nodes.git"
   },
   "keywords": [
     "node-red",
