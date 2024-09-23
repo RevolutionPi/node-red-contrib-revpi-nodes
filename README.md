@@ -5,9 +5,9 @@ This module provides a set of nodes in [Node-RED](https://nodered.org/) to read 
 
 ## Installation on a Revolution Pi
 
-On a Revolution Pi with Debian Bullseye or Bookworm everything is already 
-installed on the system. You can just start the preinstalled Node-RED and 
-use the nodes.
+On a Revolution Pi with Debian Bullseye or newer everything is already 
+preinstalled with the default image. You can just start the preinstalled 
+Node-RED and use the nodes.
 
 ## Installation on a remote instance of Node-RED
 
@@ -16,15 +16,16 @@ access to the IOs of the Revolution Pi via remote connection.
 
 ### Requirements on Revolution Pi
 
-Install the required backend server: [noderedrevpinodes-server](https://github.com/erminas/noderedrevpinodes-server) .
+Install the required backend server on the Revolution Pi via apt:
 
-The server requires [Raspbian Stretch ](https://revolution.kunbus.de/shop/de/stretch) or [Raspbian Buster ](https://revolutionpi.de/shop/de/buster).
+[noderedrevpinodes-server]
+(https://gitlab.com/revolutionpi/noderedrevpinodes-server) .
 
 ```
-sudo apt-get install noderedrevpinodes-server
+sudo apt install noderedrevpinodes-server
 ```
 
-> On Bullseye and Bookworm the server is already preinstalled in your image.
+> On Bullseye and newer the server is already preinstalled in the default image.
 
 ### Installation (on remote Host)
 Install the nodes via the [node-red-contrib-revpi-nodes package](https://flows.nodered.org/node/node-red-contrib-revpi-nodes) in the Node-RED Library.
