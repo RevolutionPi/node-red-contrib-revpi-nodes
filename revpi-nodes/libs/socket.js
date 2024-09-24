@@ -6,8 +6,8 @@
  * file 'LICENSE.txt', which is part of this source code package.
  */
 
+const WS_PROTOCOL_VERSION = "1.1.0"
 var WebSocket = require("ws");
-var pjson = require('./../../package.json');
 var fs = require('fs');
 
 module.exports = function (url, config) {
@@ -262,7 +262,7 @@ module.exports = function (url, config) {
 				if(cb){
 					cb();
 				}
-			}, [pjson.version,options.user,options.password,options.getAutomaticUpdates, inputPins]);
+			}, [WS_PROTOCOL_VERSION,options.user,options.password,options.getAutomaticUpdates, inputPins]);
 
         };
 
