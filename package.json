@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-revpi-nodes",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "author": "erminas GmbH",
   "license": "LGPL-3.0-only",
   "description": "KUNBUS RevPi Nodes",
