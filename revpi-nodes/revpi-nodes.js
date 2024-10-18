@@ -226,11 +226,11 @@ module.exports = function (RED) {
 
 					if (data !== false)
 					{
-						var pin = data.name;
+						var error_message = data.name;
 						if (data.error === "ERROR_AUTH" || data.error === "ERROR_UNKNOWN") {
 							node.status(node.getStatusObject("error", "ERROR: NO CONNECTION"));
 						}else if (data.error === "ERROR_PIN") {
-							node.status(node.getStatusObject("error", "UNKNOWN PIN: " + pin + "!"));
+							node.status(node.getStatusObject("error", "ERROR: " + error_message));
 						} else {
 							node.status(node.getStatusObject("info", "Change - " + node.outputpin + " is " + val));
 						}
